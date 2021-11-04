@@ -1,7 +1,6 @@
 ---
-layout: "uptimerobot"
-page_title: "UptimeRobot: uptimerobot_account"
-sidebar_current: "docs-uptimerobot-datasource-account"
+page_title: "uptimerobot_account Data Source - terraform-provider-uptimerobot"
+subcategory: ""
 description: |-
   Get information about your account
 ---

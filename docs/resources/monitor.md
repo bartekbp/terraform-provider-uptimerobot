@@ -1,7 +1,5 @@
 ---
-layout: "uptimerobot"
-page_title: "UptimeRobot: uptimerobot_monitor"
-sidebar_current: "docs-uptimerobot-resource-monitor"
+page_title: "uptimerobot_monitor Resource - terraform-provider-uptimerobot"
 description: |-
   Set up a monitor
 ---

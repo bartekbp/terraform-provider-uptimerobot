@@ -1,7 +1,5 @@
 ---
-layout: "uptimerobot"
-page_title: "UptimeRobot: uptimerobot_status_page"
-sidebar_current: "docs-uptimerobot-resource-status-page"
+page_title: "uptimerobot_status_page Resource - terraform-provider-uptimerobot"
 description: |-
   Set up a status page
 ---

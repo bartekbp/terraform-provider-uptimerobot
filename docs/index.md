@@ -1,7 +1,6 @@
 ---
-layout: "uptimerobot"
-page_title: "Provider: UptimeRobot"
-sidebar_current: "docs-uptimerobot-index"
+page_title: "UptimeRobot Provider"
+subcategory: ""
 description: |-
   The UptimeRobot provider is used to interact with the resources supported by UptimeRobot. The provider needs to be configured with the proper credentials before it can be used.
 ---

@@ -1,7 +1,5 @@
 ---
-- layout: `uptimerobot`
-- page_title: `UptimeRobot: uptimerobot_alert_contact`
-- sidebar_current: `docs-uptimerobot-resource-alert-contact`
+page_title: "uptimerobot_alert_contact Resource - terraform-provider-uptimerobot"
 description: |-
   Set up an alert contact
 ---

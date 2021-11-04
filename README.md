@@ -3,9 +3,18 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
 [![Build Status](https://github.com/louy/terraform-provider-uptimerobot/workflows/test/badge.svg)](https://github.com/louy/terraform-provider-uptimerobot/actions?query=branch%3Amaster+workflow%3Atest)
 
+## Migrating from the old provider
+
+If you're using the provider this was forked from, you can run the following to use the
+new provider:
+
+```bash
+terraform state replace-provider louy/uptimerobot vexxhost/uptimerobot
+```
+
 ## Getting started
 
-To install this provider, check out the installation instructions on [Terraform's registry page](https://registry.terraform.io/providers/louy/uptimerobot/latest).
+To install this provider, check out the installation instructions on [Terraform's registry page](https://registry.terraform.io/providers/vexxhost/uptimerobot/latest).
 
 ```tf
 terraform {

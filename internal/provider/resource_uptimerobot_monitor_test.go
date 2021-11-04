@@ -256,9 +256,9 @@ func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recur
 			resource.TestStep{
 				Config: fmt.Sprintf(`
 				resource "uptimerobot_alert_contact" "test" {
-					friendly_name = "#infrastructure"
-					type = "slack"
-					value = "https://slack.com/services/xxxx"
+					friendly_name = "SRE Team"
+					type          = "email"
+					value         = "sre@vexxhost.com"
 				}
 				resource "uptimerobot_monitor" "test" {
 					friendly_name = "%s"

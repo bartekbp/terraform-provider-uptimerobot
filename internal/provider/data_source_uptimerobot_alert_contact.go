@@ -1,10 +1,10 @@
-package uptimerobot
+package provider
 
 import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/vexxhost/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/vexxhost/terraform-provider-uptimerobot/internal/provider/api"
 )
 
 func dataSourceAlertContact() *schema.Resource {
@@ -37,7 +37,7 @@ func dataSourceAlertContactRead(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 	if alertContact == (uptimerobotapi.AlertContact{}) {
-		return fmt.Errorf("Failed to find alert contact by name %s", friendlyName)
+		return fmt.Errorf("failed to find alert contact by name %s", friendlyName)
 	}
 
 	d.SetId(alertContact.ID)

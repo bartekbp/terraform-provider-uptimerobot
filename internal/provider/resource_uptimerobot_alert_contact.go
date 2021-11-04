@@ -1,9 +1,10 @@
-package uptimerobot
+package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/vexxhost/terraform-provider-uptimerobot/uptimerobot/api"
+
+	uptimerobotapi "github.com/vexxhost/terraform-provider-uptimerobot/internal/provider/api"
 )
 
 func resourceAlertContact() *schema.Resource {

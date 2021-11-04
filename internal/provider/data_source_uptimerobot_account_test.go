@@ -1,4 +1,4 @@
-package uptimerobot
+package provider
 
 import (
 	"testing"

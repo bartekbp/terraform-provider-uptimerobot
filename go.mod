@@ -2,7 +2,10 @@ module github.com/vexxhost/terraform-provider-uptimerobot
 
 go 1.17
 
-require github.com/hashicorp/terraform-plugin-sdk v1.0.0
+require (
+	github.com/hashicorp/go-retryablehttp v0.7.0
+	github.com/hashicorp/terraform-plugin-sdk v1.0.0
+)
 
 require (
 	cloud.google.com/go v0.45.1 // indirect

@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -86,7 +85,7 @@ func resourceMonitor() *schema.Resource {
 				Default:  false,
 			},
 			"alert_contact": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				// PromoteSingle: true,
 				Elem: &schema.Resource{
@@ -235,9 +234,6 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 			Recurrence: v.(map[string]interface{})["recurrence"].(int),
 		}
 	}
-	sort.Slice(req.AlertContacts, func(i, j int) bool {
-		return req.AlertContacts[i].ID < req.AlertContacts[j].ID
-	})
 
 	// custom_http_headers
 	httpHeaderMap := d.Get("custom_http_headers").(map[string]interface{})

@@ -146,8 +146,10 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 
 	req.IgnoreSSLErrors = d.Get("ignore_ssl_errors").(bool)
 
-	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
-	for k, v := range d.Get("alert_contact").([]interface{}) {
+	alertContacts := d.Get("alert_contact").(*schema.Set)
+
+	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, alertContacts.Len())
+	for k, v := range alertContacts.List() {
 		req.AlertContacts[k] = uptimerobotapi.MonitorRequestAlertContact{
 			ID:         v.(map[string]interface{})["id"].(string),
 			Threshold:  v.(map[string]interface{})["threshold"].(int),
@@ -226,8 +228,8 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 	req.Interval = d.Get("interval").(int)
 	req.IgnoreSSLErrors = d.Get("ignore_ssl_errors").(bool)
 
-	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
-	for k, v := range d.Get("alert_contact").([]interface{}) {
+	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, d.Get("alert_contact").(*schema.Set).Len())
+	for k, v := range d.Get("alert_contact").(*schema.Set).List() {
 		req.AlertContacts[k] = uptimerobotapi.MonitorRequestAlertContact{
 			ID:         v.(map[string]interface{})["id"].(string),
 			Threshold:  v.(map[string]interface{})["threshold"].(int),
@@ -289,7 +291,7 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 		return fmt.Errorf("error setting custom_http_headers for resource %s: %s", d.Id(), err)
 	}
 
-	rawContacts := make([]map[string]interface{}, len(m.AlertContacts))
+	rawContacts := make([]map[string]interface{}, d.Get("alert_contact").(*schema.Set).Len())
 	for k, v := range m.AlertContacts {
 		rawContacts[k] = map[string]interface{}{
 			"id":         v.ID,

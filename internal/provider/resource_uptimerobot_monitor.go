@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	uptimerobotapi "github.com/vexxhost/terraform-provider-uptimerobot/internal/provider/api"
 )
 
@@ -291,7 +291,7 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 		return fmt.Errorf("error setting custom_http_headers for resource %s: %s", d.Id(), err)
 	}
 
-	rawContacts := make([]map[string]interface{}, d.Get("alert_contact").(*schema.Set).Len())
+	rawContacts := make([]map[string]interface{}, len(m.AlertContacts))
 	for k, v := range m.AlertContacts {
 		rawContacts[k] = map[string]interface{}{
 			"id":         v.ID,

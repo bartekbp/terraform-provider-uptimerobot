@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	uptimerobotapi "github.com/vexxhost/terraform-provider-uptimerobot/internal/provider/api"
 )
@@ -54,7 +54,6 @@ func resourceStatusPage() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
-				PromoteSingle: true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					if k == "monitors.#" && old == "1" && new == "0" && d.Get("monitors.0").(int) == 0 {
 						return true

@@ -290,6 +290,82 @@ func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recur
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_custom_alert_contacts(t *testing.T) {
+	var FriendlyName = "TF Test: custom alert contacts"
+	var Type = "http"
+	var URL = "https://google.com"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_alert_contact" "test1" {
+					friendly_name = "Test 1"
+					type          = "email"
+					value         = "test1@example.com"
+				}
+
+				resource "uptimerobot_alert_contact" "test2" {
+					friendly_name = "Test 2"
+					type          = "email"
+					value         = "test2@example.com"
+				}
+
+				resource "uptimerobot_alert_contact" "test3" {
+					friendly_name = "Test 3"
+					type          = "email"
+					value         = "test3@example.com"
+				}
+
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					alert_contact {
+						id         = uptimerobot_alert_contact.test1.id
+						threshold  = 0
+						recurrence = 0
+					}
+					alert_contact {
+						id         = uptimerobot_alert_contact.test2.id
+						threshold  = 0
+						recurrence = 0
+					}
+					alert_contact {
+						id         = uptimerobot_alert_contact.test3.id
+						threshold  = 0
+						recurrence = 0
+					}
+				}
+				`, FriendlyName, Type, URL),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.#", "3"),
+					resource.TestCheckResourceAttrSet("uptimerobot_monitor.test", "alert_contact.0.id"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.0.threshold", "0"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.0.recurrence", "0"),
+					resource.TestCheckResourceAttrSet("uptimerobot_monitor.test", "alert_contact.1.id"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.1.threshold", "0"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.1.recurrence", "0"),
+					resource.TestCheckResourceAttrSet("uptimerobot_monitor.test", "alert_contact.2.id"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.2.threshold", "0"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.2.recurrence", "0"),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+
 func TestUptimeRobotDataResourceMonitor_custom_http_headers(t *testing.T) {
 	var FriendlyName = "TF Test:  custom http headers"
 	var Type = "http"

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-	"sort"
 	"strings"
 )
 
@@ -102,7 +101,7 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	}
 
 	if len(monitors) < 1 {
-		err = errors.New("Monitor not found: " + string(id))
+		err = fmt.Errorf("Monitor not found: %d", id)
 		return
 	}
 
@@ -169,9 +168,6 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 			ac.Threshold = int(contact["threshold"].(float64))
 			m.AlertContacts[k] = ac
 		}
-		sort.Slice(m.AlertContacts, func(i, j int) bool {
-			return m.AlertContacts[i].ID < m.AlertContacts[j].ID
-		})
 	}
 
 	return

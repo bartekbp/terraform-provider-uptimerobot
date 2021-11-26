@@ -20,8 +20,8 @@ To install this provider, check out the installation instructions on [Terraform'
 terraform {
   required_providers {
     uptimerobot = {
-      source = "louy/uptimerobot"
-      version = "0.5.1"
+      source = "vexxhost/uptimerobot"
+      version = "0.7.0"
     }
   }
 }

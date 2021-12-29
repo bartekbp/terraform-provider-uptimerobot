@@ -20,25 +20,33 @@ resource `uptimerobot_alert_contact` `slack` {
 
 ## Arguments Reference
 
-* `friendly_name` - friendly name of the alert contact (for making it easier to distinguish from others).
-* `type` - the type of the alert contact notified (Zapier, HipChat and Slack are not supported in the api yet)
+- `friendly_name` - friendly name of the alert contact (for making it easier to distinguish from others).
+- `type` - the type of the alert contact notified
 
   Possible values are the following:
+
   - `sms`
-  - `email`
-  - `twitter-dm`
+  - `e-mail` (or `email`)
+  - `twitter` (or `twitter-dm`)
   - `boxcar`
-  - `webhook`
+  - `web-hook` (or `webhook`)
   - `pushbullet`
   - `zapier`
+  - `pro-sms`
   - `pushover`
-  - `hipchat`
   - `slack`
+  - `voice-call`
+  - `splunk`
+  - `pagerduty`
+  - `opsgenie`
   - `telegram`
-  - `hangouts`
-* `value` - alert contact's address/phone/url
+  - `ms-teams`
+  - `google-chat` (or `hangouts`)
+  - `discord`
+
+- `value` - alert contact's address/phone/url
 
 ## Attributes Reference
 
-* `id` - the ID of the alert contact.
-* `status` - the status of the alert contact (`not activated`, `paused` or `active`)
+- `id` - the ID of the alert contact.
+- `status` - the status of the alert contact (`not activated`, `paused` or `active`)

@@ -490,6 +490,41 @@ func TestUptimeRobotDataResourceMonitor_custom_interval(t *testing.T) {
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_http_method(t *testing.T) {
+	var FriendlyName = "TF Test: http method monitor"
+	var Type = "http"
+	var URL = "https://httpbin.org/post"
+	var Method = "POST"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name  = "%s"
+					type           = "%s"
+					url            = "%s"
+					http_method    = "%s"
+				}
+				`, FriendlyName, Type, URL, Method),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_method", Method),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 	var FriendlyName = "TF Test: http auth monitor"
 	var Type = "http"

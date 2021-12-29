@@ -47,6 +47,17 @@ var monitorHTTPAuthType = map[string]int{
 }
 var MonitorHTTPAuthType = mapKeys(monitorHTTPAuthType)
 
+var monitorHTTPMethod = map[string]int{
+	"HEAD":    1,
+	"GET":     2,
+	"POST":    3,
+	"PUT":     4,
+	"PATCH":   5,
+	"DELETE":  6,
+	"OPTIONS": 7,
+}
+var MonitorHTTPMethod = mapKeys(monitorHTTPMethod)
+
 type MonitorAlertContact struct {
 	ID         string `json:"id"`
 	Recurrence int    `json:"recurrence"`
@@ -67,6 +78,7 @@ type Monitor struct {
 	KeywordType  string `json:"keyword_type"`
 	KeywordValue string `json:"keyword_value"`
 
+	HTTPMethod   string `json:"http_method"`
 	HTTPUsername string `json:"http_username"`
 	HTTPPassword string `json:"http_password"`
 	HTTPAuthType string `json:"http_auth_type"`
@@ -132,6 +144,7 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 			// PS: There seems to be a bug in the UR api as it never returns this value
 			m.HTTPAuthType = intToString(monitorHTTPAuthType, int(val.(float64)))
 		}
+		m.HTTPMethod = intToString(monitorHTTPMethod, int(monitor["http_method"].(float64)))
 		m.HTTPUsername = monitor["http_username"].(string)
 		m.HTTPPassword = monitor["http_password"].(string)
 		break
@@ -140,6 +153,7 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 			// PS: There seems to be a bug in the UR api as it never returns this value
 			m.HTTPAuthType = intToString(monitorHTTPAuthType, int(val.(float64)))
 		}
+		m.HTTPMethod = intToString(monitorHTTPMethod, int(monitor["http_method"].(float64)))
 		m.HTTPUsername = monitor["http_username"].(string)
 		m.HTTPPassword = monitor["http_password"].(string)
 		break
@@ -190,6 +204,7 @@ type MonitorCreateRequest struct {
 	KeywordType  string
 	KeywordValue string
 
+	HTTPMethod   string
 	HTTPUsername string
 	HTTPPassword string
 	HTTPAuthType string
@@ -216,11 +231,13 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 		data.Add("keyword_type", fmt.Sprintf("%d", monitorKeywordType[req.KeywordType]))
 		data.Add("keyword_value", req.KeywordValue)
 
+		data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[req.HTTPMethod]))
 		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
 		break
 	case "http":
+		data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[req.HTTPMethod]))
 		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
@@ -274,6 +291,7 @@ type MonitorUpdateRequest struct {
 	KeywordType  string
 	KeywordValue string
 
+	HTTPMethod   string
 	HTTPUsername string
 	HTTPPassword string
 	HTTPAuthType string
@@ -301,11 +319,13 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 		data.Add("keyword_type", fmt.Sprintf("%d", monitorKeywordType[req.KeywordType]))
 		data.Add("keyword_value", req.KeywordValue)
 
+		data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[req.HTTPMethod]))
 		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
 		break
 	case "http":
+		data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[req.HTTPMethod]))
 		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)

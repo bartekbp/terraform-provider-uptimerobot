@@ -3,8 +3,8 @@ package provider
 import (
 	"time"
 
+	uptimerobotapi "github.com/bartekbp/terraform-provider-uptimerobot/internal/provider/api"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	uptimerobotapi "github.com/vexxhost/terraform-provider-uptimerobot/internal/provider/api"
 )
 
 func dataSourceAccount() *schema.Resource {

@@ -3,10 +3,11 @@ package provider
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
+	uptimerobotapi "github.com/bartekbp/terraform-provider-uptimerobot/internal/provider/api"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	uptimerobotapi "github.com/vexxhost/terraform-provider-uptimerobot/internal/provider/api"
 )
 
 func resourceMonitor() *schema.Resource {
@@ -64,7 +65,6 @@ func resourceMonitor() *schema.Resource {
 			"http_method": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Default:      "GET",
 				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorHTTPMethod, false),
 			},
 			"http_username": {
@@ -80,6 +80,20 @@ func resourceMonitor() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorHTTPAuthType, false),
+			},
+			"post_value": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"post_type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorPostType, false),
+			},
+			"post_content_type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorPostContentType, false),
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -136,16 +150,29 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 		req.KeywordType = d.Get("keyword_type").(string)
 		req.KeywordValue = d.Get("keyword_value").(string)
 
-		req.HTTPMethod = d.Get("http_method").(string)
+		if method := d.Get("http_method").(string); len(method) > 0 {
+			req.HTTPMethod = method
+		} else {
+			req.HTTPMethod = "GET"
+		}
+
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
 		req.HTTPAuthType = d.Get("http_auth_type").(string)
 		break
 	case "http":
-		req.HTTPMethod = d.Get("http_method").(string)
+		if method := d.Get("http_method").(string); len(method) > 0 {
+			req.HTTPMethod = method
+		} else {
+			req.HTTPMethod = "GET"
+		}
+
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
 		req.HTTPAuthType = d.Get("http_auth_type").(string)
+		req.PostValue = d.Get("post_value").(string)
+		req.PostType = d.Get("post_type").(string)
+		req.PostContentType = d.Get("post_content_type").(string)
 		break
 	}
 
@@ -191,7 +218,12 @@ func resourceMonitorRead(d *schema.ResourceData, m interface{}) error {
 
 	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).GetMonitor(id)
 	if err != nil {
-		return err
+		if strings.HasPrefix(err.Error(), "Monitor not found") {
+			d.SetId("")
+			return nil
+		} else {
+			return err
+		}
 	}
 	if err := updateMonitorResource(d, monitor); err != nil {
 		return err
@@ -221,13 +253,22 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 		req.KeywordType = d.Get("keyword_type").(string)
 		req.KeywordValue = d.Get("keyword_value").(string)
 
-		req.HTTPMethod = d.Get("http_method").(string)
+		if method := d.Get("http_method").(string); len(method) > 0 {
+			req.HTTPMethod = method
+		} else {
+			req.HTTPMethod = "GET"
+		}
+
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
 		req.HTTPAuthType = d.Get("http_auth_type").(string)
 		break
 	case "http":
-		req.HTTPMethod = d.Get("http_method").(string)
+		if method := d.Get("http_method").(string); len(method) > 0 {
+			req.HTTPMethod = method
+		} else {
+			req.HTTPMethod = "GET"
+		}
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
 		req.HTTPAuthType = d.Get("http_auth_type").(string)
@@ -290,7 +331,6 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 	d.Set("keyword_type", m.KeywordType)
 	d.Set("keyword_value", m.KeywordValue)
 
-	d.Set("http_method", m.HTTPMethod)
 	d.Set("http_username", m.HTTPUsername)
 	d.Set("http_password", m.HTTPPassword)
 	// PS: There seems to be a bug in the UR api as it never returns this value

@@ -12,7 +12,7 @@ package provider
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	uptimerobotapi "github.com/vexxhost/terraform-provider-uptimerobot/internal/provider/api"
+	uptimerobotapi "github.com/bartekbp/terraform-provider-uptimerobot/internal/provider/api"
 )
 
 // Provider returns a schema.Provider.

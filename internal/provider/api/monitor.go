@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -47,6 +49,18 @@ var monitorHTTPAuthType = map[string]int{
 }
 var MonitorHTTPAuthType = mapKeys(monitorHTTPAuthType)
 
+var monitorPostType = map[string]int{
+	"key-value": 1,
+	"raw data":  2,
+}
+var MonitorPostType = mapKeys(monitorPostType)
+
+var monitorPostContentType = map[string]int{
+	"text/html":        0,
+	"application/json": 1,
+}
+var MonitorPostContentType = mapKeys(monitorPostContentType)
+
 var monitorHTTPMethod = map[string]int{
 	"HEAD":    1,
 	"GET":     2,
@@ -56,6 +70,7 @@ var monitorHTTPMethod = map[string]int{
 	"DELETE":  6,
 	"OPTIONS": 7,
 }
+
 var MonitorHTTPMethod = mapKeys(monitorHTTPMethod)
 
 type MonitorAlertContact struct {
@@ -78,7 +93,6 @@ type Monitor struct {
 	KeywordType  string `json:"keyword_type"`
 	KeywordValue string `json:"keyword_value"`
 
-	HTTPMethod   string `json:"http_method"`
 	HTTPUsername string `json:"http_username"`
 	HTTPPassword string `json:"http_password"`
 	HTTPAuthType string `json:"http_auth_type"`
@@ -144,7 +158,7 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 			// PS: There seems to be a bug in the UR api as it never returns this value
 			m.HTTPAuthType = intToString(monitorHTTPAuthType, int(val.(float64)))
 		}
-		m.HTTPMethod = intToString(monitorHTTPMethod, int(monitor["http_method"].(float64)))
+
 		m.HTTPUsername = monitor["http_username"].(string)
 		m.HTTPPassword = monitor["http_password"].(string)
 		break
@@ -153,7 +167,7 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 			// PS: There seems to be a bug in the UR api as it never returns this value
 			m.HTTPAuthType = intToString(monitorHTTPAuthType, int(val.(float64)))
 		}
-		m.HTTPMethod = intToString(monitorHTTPMethod, int(monitor["http_method"].(float64)))
+
 		m.HTTPUsername = monitor["http_username"].(string)
 		m.HTTPPassword = monitor["http_password"].(string)
 		break
@@ -182,6 +196,19 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 			ac.Threshold = int(contact["threshold"].(float64))
 			m.AlertContacts[k] = ac
 		}
+
+		sort.SliceStable(m.AlertContacts, func(i, j int) bool {
+			first, err := strconv.Atoi(m.AlertContacts[i].ID)
+			if err != nil {
+				panic(errors.New(fmt.Sprintf("not int %s", m.AlertContacts[i].ID)))
+			}
+
+			snd, err2 := strconv.Atoi(m.AlertContacts[j].ID)
+			if err2 != nil {
+				panic(errors.New(fmt.Sprintf("not int %s", m.AlertContacts[j].ID)))
+			}
+			return first < snd
+		})
 	}
 
 	return
@@ -208,6 +235,10 @@ type MonitorCreateRequest struct {
 	HTTPUsername string
 	HTTPPassword string
 	HTTPAuthType string
+
+	PostValue       string
+	PostType        string
+	PostContentType string
 
 	IgnoreSSLErrors bool
 
@@ -241,6 +272,17 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
+		if req.PostValue != "" {
+			data.Add("post_value", req.PostValue)
+		}
+
+		if req.PostType != "" {
+			data.Add("post_type", fmt.Sprintf("%d", monitorPostType[req.PostType]))
+		}
+
+		if req.PostContentType != "" {
+			data.Add("post_content_type", fmt.Sprintf("%d", monitorPostContentType[req.PostContentType]))
+		}
 		break
 	}
 

@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
+	uptimerobotapi "github.com/bartekbp/terraform-provider-uptimerobot/internal/provider/api"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	uptimerobotapi "github.com/vexxhost/terraform-provider-uptimerobot/internal/provider/api"
 )
 
 func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
@@ -507,6 +507,9 @@ func TestUptimeRobotDataResourceMonitor_http_method(t *testing.T) {
 					type           = "%s"
 					url            = "%s"
 					http_method    = "%s"
+					post_value     = "{\"test\":\"ok\"}"
+					post_type      = "key-value"
+					post_content_type = "text/html"
 				}
 				`, FriendlyName, Type, URL, Method),
 				Check: resource.ComposeTestCheckFunc(
@@ -514,12 +517,16 @@ func TestUptimeRobotDataResourceMonitor_http_method(t *testing.T) {
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_method", Method),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "post_value", "{\"test\":\"ok\"}"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "post_type", "key-value"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "post_content_type", "text/html"),
 				),
 			},
 			resource.TestStep{
-				ResourceName:      "uptimerobot_monitor.test",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "uptimerobot_monitor.test",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"http_method", "post_value", "post_type", "post_content_type"},
 			},
 		},
 	})

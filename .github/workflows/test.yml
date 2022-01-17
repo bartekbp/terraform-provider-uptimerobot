@@ -49,8 +49,8 @@ jobs:
 
       - name: TF acceptance tests
         timeout-minutes: 10
-        env:
-          TF_ACC: "0"
+#        env:
+#          TF_ACC: "1"
 #          UPTIMEROBOT_API_KEY: ${{ secrets.UPTIMEROBOT_API_KEY }}
         run: |
           go test -v -cover ./internal/provider/
